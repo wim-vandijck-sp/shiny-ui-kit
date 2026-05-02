@@ -11,11 +11,13 @@
 1.  Log into SailPoint ISC as an administrator
 1.  Navigate to: Admin → Security Settings → API Management
 1.  Create a new OAuth client:
-   -   **Name:** "Identity Manager - Development"
-   -   **Grant Types:** Authorization Code
-   -   **Redirect URI (dev):** `http://localhost:8000/oauth/callback`
-   -   **Scopes:** `sp:scopes:all`
-   -   **Refresh Token:** Enabled
+
+-   **Name:** "Identity Manager - Development"
+-   **Grant Types:** Authorization Code
+-   **Redirect URI (dev):** `http://localhost:8000/oauth/callback`
+-   **Scopes:** `sp:scopes:all`
+-   **Refresh Token:** Enabled
+
 1.  Record the Client ID and Client Secret
 
 ## Local Development
@@ -25,7 +27,7 @@
 cd shiny-ui-kit
 
 # Create and activate virtual environment
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 
 # Install dependencies
