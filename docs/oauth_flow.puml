@@ -1,0 +1,77 @@
+@startuml
+actor Browser
+participant App as "Shiny App / Starlette"
+participant OAuthHandler
+participant "OAuth Provider" as OAuthProvider
+participant SessionManager
+participant "ISC Client" as ISCClient
+
+Browser -> App: GET /login
+activate App
+App -> OAuthHandler: generate_authorization_url()
+activate OAuthHandler
+OAuthHandler -> OAuthProvider: GET /authorize?client_id=...&redirect_uri=...&scope=...&state=...
+OAuthHandler --> App: auth_url, state
+deactivate OAuthHandler
+App -> Browser: 302 Redirect to auth_url\nSet-Cookie: oauth_state=<state>
+deactivate App
+
+Browser -> OAuthProvider: GET /authorize?...&state=...
+activate OAuthProvider
+OAuthProvider --> Browser: 302 Redirect to /callback?code=...&state=...
+deactivate OAuthProvider
+
+Browser -> App: GET /callback?code=...&state=...
+activate App
+App -> Browser: read cookie oauth_state
+App -> OAuthHandler: validate_state(state)
+activate OAuthHandler
+OAuthHandler --> App: valid/invalid
+deactivate OAuthHandler
+alt state valid
+    App -> OAuthHandler: exchange_code(code)
+    activate OAuthHandler
+    OAuthHandler -> OAuthProvider: POST /token\n(code, client_secret, redirect_uri)
+    OAuthProvider --> OAuthHandler: access_token, refresh_token, expires_in
+    OAuthHandler --> App: TokenSet
+    deactivate OAuthHandler
+
+    App -> SessionManager: create_session(token_set)
+    SessionManager --> App: session_id
+    App -> Browser: 302 Redirect /\nSet-Cookie: session_id=<session_id>\nDelete-Cookie: oauth_state
+else invalid state
+    App -> Browser: 302 Redirect /?error=invalid_state
+end
+deactivate App
+
+=== Subsequent requests ===
+
+Browser -> App: GET /
+activate App
+App -> SessionManager: get_session(session_id cookie)
+SessionManager --> App: Session(token_set,user_info)
+App -> ISCClient: get_client_for_session(session, oauth_handler)
+activate ISCClient
+alt token not expired
+    ISCClient --> App: cached client
+else token expired
+    ISCClient -> OAuthHandler: refresh_token(refresh_token)
+    activate OAuthHandler
+    OAuthHandler -> OAuthProvider: POST /token\n(refresh_token, client_secret)
+    OAuthProvider --> OAuthHandler: new access_token
+    OAuthHandler --> ISCClient: new TokenSet
+    deactivate OAuthHandler
+    ISCClient --> App: refreshed client
+end
+deactivate ISCClient
+App --> Browser: render app
+
+=== Logout ===
+
+Browser -> App: POST /logout
+activate App
+App -> SessionManager: delete_session(session_id)
+App -> ISCClient: evict_client(session_id)
+App --> Browser: {"success": true}\nDelete-Cookie: session_id
+deactivate App
+@enduml

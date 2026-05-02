@@ -1,0 +1,217 @@
+/* SailPoint Identity Manager — Custom Styles */
+
+/* ── Bootstrap 5 CSS variable overrides (SailPoint brand) ─────────────────── */
+:root {
+  --bs-primary: #0033a1;
+  --bs-primary-rgb: 0, 51, 161;
+  --bs-success: #00b288;
+  --bs-success-rgb: 0, 178, 136;
+  --bs-info: #00b4f0;
+  --bs-info-rgb: 0, 180, 240;
+  --bs-warning: #f5a623;
+  --bs-warning-rgb: 245, 166, 35;
+  --bs-link-color: #0033a1;
+  --bs-link-hover-color: #002480;
+  --sp-nav-bg: #011533;
+}
+
+/* ── Dark mode: theme attribute set on <html> by JS ───────────────────────── */
+[data-bs-theme="dark"] {
+  --bs-body-bg: #0d1117;
+  --bs-body-color: #e6edf3;
+  --bs-card-bg: #161b22;
+  --bs-border-color: #30363d;
+  --bs-secondary-color: #8b949e;
+}
+
+[data-bs-theme="dark"] .card {
+  background-color: #161b22;
+  border-color: #30363d;
+}
+
+[data-bs-theme="dark"] .modal-content {
+  background-color: #1c2128;
+  border-color: #30363d;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+  background-color: #0d1117;
+  border-color: #30363d;
+  color: #e6edf3;
+}
+
+/* ── Dark/light theme toggle button icons ────────────────────────────────── */
+/* Show moon icon in light mode, sun icon in dark mode */
+.sp-theme-moon { display: inline-block; }
+.sp-theme-sun  { display: none; }
+
+[data-bs-theme="dark"] .sp-theme-moon { display: none; }
+[data-bs-theme="dark"] .sp-theme-sun  { display: inline-block; }
+
+/* ── Loading spinner ─────────────────────────────────────────────────────── */
+.loading-container {
+  position: relative;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 3px solid var(--bs-border-color, #dee2e6);
+  border-top-color: var(--bs-primary);
+  border-radius: 50%;
+  animation: sp-spin 0.7s linear infinite;
+}
+
+@keyframes sp-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Empty / error states ────────────────────────────────────────────────── */
+.empty-state {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.empty-state .empty-icon {
+  font-size: 2rem;
+  opacity: 0.35;
+}
+
+/* ── Login page ───────────────────────────────────────────────────────────── */
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.login-page .card {
+  max-width: 420px;
+  width: 100%;
+}
+
+.login-page h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.auth-status {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--bs-secondary-color, #6c757d);
+}
+
+/* ── Navbar ───────────────────────────────────────────────────────────────── */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+}
+
+.navbar-brand img {
+  max-height: 28px;
+  width: auto;
+  border-radius: 3px;
+}
+
+/* Theme and branding toggle area in navbar */
+.sp-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Component toggle (Settings page) ────────────────────────────────────── */
+.component-toggle {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+}
+
+.component-toggle:last-child {
+  border-bottom: none;
+}
+
+/* ── Home dashboard ───────────────────────────────────────────────────────── */
+.card-hover {
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  cursor: pointer;
+}
+
+.card-hover:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(-2px);
+}
+
+.stat-card-icon {
+  font-size: 1.5rem;
+  opacity: 0.6;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Pagination bar ───────────────────────────────────────────────────────── */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Detail modal ─────────────────────────────────────────────────────────── */
+.modal-body .mb-2 {
+  padding: 0.25rem 0;
+  border-bottom: 1px solid var(--bs-border-color-translucent, rgba(0,0,0,.1));
+}
+
+.modal-body .mb-2:last-child {
+  border-bottom: none;
+}
+
+/* ── Search index checkboxes ──────────────────────────────────────────────── */
+.form-check-inline .form-check-input {
+  margin-right: 0.25rem;
+}
+
+/* ── Branding preview (Settings page) ────────────────────────────────────── */
+.branding-preview {
+  user-select: none;
+  pointer-events: none;
+  max-width: 520px;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .pagination-bar .btn {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  /* Shortcut cards: 2 per row on tablet */
+  .shortcuts-grid > [class*="col-3"] {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 576px) {
+  /* Shortcut cards: 1 per row on mobile */
+  .shortcuts-grid > [class*="col-3"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* Stat cards: 1 per row on mobile */
+  .stats-grid > [class*="col-4"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

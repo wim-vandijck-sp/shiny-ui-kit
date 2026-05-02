@@ -1,0 +1,73 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sailpoint-identity-manager"
+version = "0.1.0"
+description = "SailPoint Identity Security Cloud management interface built with Shiny for Python"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "Wim Van Dijck", email = "wim.v.dijck@gmail.com"}
+]
+dependencies = [
+    "shiny>=1.0.0",
+    "starlette>=0.35.0",
+    "uvicorn[standard]>=0.25.0",
+    "python-multipart>=0.0.6",
+    "httpx>=0.25.0",
+    "python-jose[cryptography]>=3.3.0",
+    "itsdangerous>=2.1.0",
+    "pandas>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "gunicorn>=21.0.0",
+    "python-json-logger>=2.0.0",
+    "sailpoint>=1.4.0",
+    "requests-oauthlib>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+    "pre-commit>=3.0.0",
+]
+
+[project.scripts]
+sailpoint-app = "run:main"
+
+[tool.setuptools.packages.find]
+include = ["auth*", "components*", "isc*", "ui*", "config*"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "B", "C4", "UP"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["auth", "components", "sailpoint", "ui", "config"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -q --cov=. --cov-report=term-missing"
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+branch = true
+source = ["auth", "components", "sailpoint", "ui", "config"]
+omit = ["tests/*", "docs/*", "*.egg-info/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]

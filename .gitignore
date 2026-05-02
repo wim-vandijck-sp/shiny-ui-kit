@@ -1,0 +1,30 @@
+__pycache__/
+*.py[cod]
+*.so
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+.idea/
+.vscode/
+
+# Environment & secrets
+.env
+*.env.local
+
+# App runtime
+config/config.json
+*.log
+
+# Docker
+.docker/
+
+# Claude Code local settings
+.claude/settings.local.json
