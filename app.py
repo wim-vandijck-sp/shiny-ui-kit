@@ -3,11 +3,12 @@ from pathlib import Path
 
 from shiny import App, reactive, render, ui
 
-logger = logging.getLogger(__name__)
-
 from auth.starlette_routes import _get_oauth_handler, get_session_manager
 from components.accounts import accounts_server, accounts_ui
-from components.component_selector import component_selector_server, component_selector_ui
+from components.component_selector import (
+    component_selector_server,
+    component_selector_ui,
+)
 from components.home import home_server, home_ui
 from components.identities import identities_server, identities_ui
 from components.login import login_server, login_ui
@@ -15,6 +16,9 @@ from components.registry import ComponentInfo, ComponentRegistry
 from components.search import search_server, search_ui
 from isc.oauth_client import get_client_for_session
 from ui.theme import APP_TITLE, SP_NAV_BG
+
+logger = logging.getLogger(__name__)
+
 
 _CSS_PATH = Path(__file__).parent / "ui" / "styles.css"
 _LOGOUT_JS = "fetch('/api/auth/logout',{method:'POST'}).then(()=>location.assign('/'))"
@@ -82,9 +86,30 @@ _ICON_MAP: dict[str, str] = {
 # Singleton registry
 # ---------------------------------------------------------------------------
 registry = ComponentRegistry()
-registry.register(ComponentInfo(name="identities", label="Identities", description="Browse and search identities.", icon="people"))
-registry.register(ComponentInfo(name="accounts", label="Accounts", description="View accounts across sources.", icon="shield"))
-registry.register(ComponentInfo(name="search", label="Search", description="Run global full-text searches.", icon="search"))
+registry.register(
+    ComponentInfo(
+        name="identities",
+        label="Identities",
+        description="Browse and search identities.",
+        icon="people",
+    )
+)
+registry.register(
+    ComponentInfo(
+        name="accounts",
+        label="Accounts",
+        description="View accounts across sources.",
+        icon="shield",
+    )
+)
+registry.register(
+    ComponentInfo(
+        name="search",
+        label="Search",
+        description="Run global full-text searches.",
+        icon="search",
+    )
+)
 
 _HOME_UI: ui.Tag = home_ui("home")
 _COMPONENT_UI: dict[str, ui.Tag] = {
@@ -111,9 +136,15 @@ def _build_nav_panels() -> list[ui.Tag]:
         panel_ui = _COMPONENT_UI.get(comp.name)
         if panel_ui is not None:
             icon = _ICON_MAP.get(comp.name, "fa-grid")
-            panels.append(ui.nav_panel(_nav_label(icon, comp.label), panel_ui, value=comp.label))
+            panels.append(
+                ui.nav_panel(_nav_label(icon, comp.label), panel_ui, value=comp.label)
+            )
     panels.append(
-        ui.nav_panel(_nav_label("fa-sliders", "Settings"), component_selector_ui("settings"), value="Settings")
+        ui.nav_panel(
+            _nav_label("fa-sliders", "Settings"),
+            component_selector_ui("settings"),
+            value="Settings",
+        )
     )
     return panels
 
@@ -176,8 +207,12 @@ def _build_custom_css(colors: dict) -> str:
         parts.append(f".navbar {{ background-color: #{nav} !important; }}")
     if valid(action):
         r, g, b = int(action[0:2], 16), int(action[2:4], 16), int(action[4:6], 16)
-        parts.append(f":root {{ --bs-primary: #{action}; --bs-primary-rgb: {r},{g},{b}; }}")
-        parts.append(f".btn-primary {{ background-color: #{action}; border-color: #{action}; }}")
+        parts.append(
+            f":root {{ --bs-primary: #{action}; --bs-primary-rgb: {r},{g},{b}; }}"
+        )
+        parts.append(
+            f".btn-primary {{ background-color: #{action}; border-color: #{action}; }}"
+        )
     if valid(link):
         parts.append(f":root {{ --bs-link-color: #{link}; }}")
     return "\n".join(parts)
@@ -191,7 +226,9 @@ def _get_client_safe(user_sess, oauth_handler):
 
 
 def _build_authenticated_shell(branding: "dict | None", user_sess) -> ui.Tag:
-    user_name = user_sess.user_info.get("name") or user_sess.user_info.get("sub") or "User"
+    user_name = (
+        user_sess.user_info.get("name") or user_sess.user_info.get("sub") or "User"
+    )
     logo_url = branding.get("logo_data_url") if branding else None
     return ui.navset_bar(
         *_build_nav_panels(),
@@ -248,7 +285,9 @@ def server(input, output, session):
         user_sess = _user_session()
         if user_sess is None:
             return None
-        logger.debug("Creating ISC client for user=%s", user_sess.user_info.get("sub", "?"))
+        logger.debug(
+            "Creating ISC client for user=%s", user_sess.user_info.get("sub", "?")
+        )
         return _get_client_safe(user_sess, _get_oauth_handler())
 
     @reactive.effect
@@ -260,7 +299,9 @@ def server(input, output, session):
         try:
             result = c.get_branding()
             _branding.set(result)
-            logger.debug("Branding fetched: keys=%s", list(result.keys()) if result else [])
+            logger.debug(
+                "Branding fetched: keys=%s", list(result.keys()) if result else []
+            )
         except Exception:
             logger.debug("Branding fetch failed")
             _branding.set({})
@@ -303,7 +344,9 @@ def server(input, output, session):
         ui.update_navset("navbar", selected=tab, session=session)
 
     login_server("login", error_param=_error_param)
-    home_server("home", user_session=_user_session, client=_isc_client, registry=registry)
+    home_server(
+        "home", user_session=_user_session, client=_isc_client, registry=registry
+    )
     identities_server("identities", client=_isc_client)
     accounts_server("accounts", client=_isc_client)
     search_server("search", client=_isc_client)
