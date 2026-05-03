@@ -11,10 +11,10 @@ from auth.session_manager import Session
 from isc.client import SailPointClient, SailPointError
 from isc.oauth_client import _client_cache, _lock, evict_client, get_client_for_session
 
-
 # ---------------------------------------------------------------------------
 # Shared helpers
 # ---------------------------------------------------------------------------
+
 
 def _make_token(expired: bool = False) -> TokenSet:
     return TokenSet(
@@ -31,6 +31,7 @@ def _make_session(session_id: str = "sess-1", expired: bool = False) -> Session:
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture(autouse=True)
 def _clear_cache():
@@ -116,7 +117,9 @@ class TestListIdentities:
     def test_calls_sdk_with_kwargs(self, client, mock_sdk):
         with patch("isc.client.IdentitiesApi") as mock_api_cls:
             mock_api_cls.return_value.list_identities.return_value = ["id1"]
-            result = client.list_identities(limit=50, offset=10, filters='name eq "Alice"')
+            result = client.list_identities(
+                limit=50, offset=10, filters='name eq "Alice"'
+            )
 
         mock_api_cls.return_value.list_identities.assert_called_once_with(
             limit=50, offset=10, filters='name eq "Alice"', sorters=None
@@ -148,9 +151,7 @@ class TestSearchIdentities:
         with patch.object(client, "search_post", return_value=["r"]) as mock_sp:
             result = client.search_identities("Alice", limit=30)
 
-        mock_sp.assert_called_once_with(
-            indices=["identities"], query="Alice", limit=30
-        )
+        mock_sp.assert_called_once_with(indices=["identities"], query="Alice", limit=30)
         assert result == ["r"]
 
 

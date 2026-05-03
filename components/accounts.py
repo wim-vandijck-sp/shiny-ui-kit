@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import pandas as pd
 from shiny import module, reactive, render, ui
@@ -66,7 +67,9 @@ def _account_detail_modal(r: object) -> ui.Tag:
             _detail_row("Locked", _bool_label(r, "locked")),
             _detail_row("Has Entitlements", _bool_label(r, "has_entitlements")),
         ),
-        title=ui.tags.span(ui.tags.i(class_="fa-solid fa-shield-halved me-2 text-primary"), name),
+        title=ui.tags.span(
+            ui.tags.i(class_="fa-solid fa-shield-halved me-2 text-primary"), name
+        ),
         easy_close=True,
         footer=ui.modal_button("Close"),
         size="m",
@@ -95,9 +98,13 @@ def _make_pagination_bar(page: int, has_next: bool) -> ui.Tag:
     prev_cls = "btn btn-sm btn-outline-secondary" + ("" if page > 1 else " disabled")
     next_cls = "btn btn-sm btn-outline-secondary" + ("" if has_next else " disabled")
     return ui.div(
-        ui.input_action_button("prev_page", ui.tags.i(class_="fa-solid fa-chevron-left"), class_=prev_cls),
+        ui.input_action_button(
+            "prev_page", ui.tags.i(class_="fa-solid fa-chevron-left"), class_=prev_cls
+        ),
         ui.tags.span(f"Page {page}", class_="mx-2 align-middle text-muted small"),
-        ui.input_action_button("next_page", ui.tags.i(class_="fa-solid fa-chevron-right"), class_=next_cls),
+        ui.input_action_button(
+            "next_page", ui.tags.i(class_="fa-solid fa-chevron-right"), class_=next_cls
+        ),
         class_="d-flex align-items-center mb-2",
     )
 
@@ -114,7 +121,9 @@ def _setup_page_reset(input, _page: "reactive.Value[int]") -> None:
         _page.set(1)
 
 
-def _setup_pagination_effects(input, _page: "reactive.Value[int]", rows_fn: Callable) -> None:
+def _setup_pagination_effects(
+    input, _page: "reactive.Value[int]", rows_fn: Callable
+) -> None:
     @reactive.effect
     @reactive.event(input.prev_page)
     def _prev() -> None:
@@ -149,17 +158,31 @@ def _setup_detail_modal(input, rows_fn: Callable) -> None:
 @module.ui
 def accounts_ui() -> ui.Tag:
     return ui.div(
-        ui.h3(ui.tags.i(class_="fa-solid fa-shield-halved me-2 text-primary"), "Accounts"),
+        ui.h3(
+            ui.tags.i(class_="fa-solid fa-shield-halved me-2 text-primary"), "Accounts"
+        ),
         ui.row(
-            ui.column(4, ui.input_text("search", "Search", placeholder="Account name…")),
+            ui.column(
+                4, ui.input_text("search", "Search", placeholder="Account name…")
+            ),
             ui.column(3, ui.output_ui("source_filter_ui")),
-            ui.column(2, ui.input_select("page_size", "Per page", choices={str(n): str(n) for n in _PAGE_SIZES}, selected="50")),
+            ui.column(
+                2,
+                ui.input_select(
+                    "page_size",
+                    "Per page",
+                    choices={str(n): str(n) for n in _PAGE_SIZES},
+                    selected="50",
+                ),
+            ),
             ui.column(
                 3,
                 ui.div(
                     ui.input_action_button(
                         "refresh",
-                        ui.tags.span(ui.tags.i(class_="fa-solid fa-rotate-right me-1"), "Refresh"),
+                        ui.tags.span(
+                            ui.tags.i(class_="fa-solid fa-rotate-right me-1"), "Refresh"
+                        ),
                         class_="btn btn-outline-secondary w-100",
                     ),
                     class_="mt-4",
@@ -192,7 +215,9 @@ def accounts_server(
             return []
         try:
             accounts = c.list_accounts(limit=250)
-            return sorted({_attr(a, "source_name") for a in accounts if _attr(a, "source_name")})
+            return sorted(
+                {_attr(a, "source_name") for a in accounts if _attr(a, "source_name")}
+            )
         except Exception:
             return []
 
@@ -201,7 +226,9 @@ def accounts_server(
     def source_filter_ui() -> ui.Tag:
         choices = {_ALL_SOURCES: "All sources"}
         choices.update({s: s for s in _source_names()})
-        return ui.input_select("source", "Source", choices=choices, selected=_ALL_SOURCES)
+        return ui.input_select(
+            "source", "Source", choices=choices, selected=_ALL_SOURCES
+        )
 
     @reactive.calc
     def _rows() -> list:

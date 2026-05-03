@@ -5,7 +5,6 @@ import pytest
 
 from components.registry import ComponentInfo, ComponentRegistry
 
-
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -20,8 +19,14 @@ def cfg(tmp_path: Path) -> Path:
 @pytest.fixture
 def registry(cfg: Path) -> ComponentRegistry:
     r = ComponentRegistry(config_path=cfg)
-    r.register(ComponentInfo(name="identities", label="Identities", description="View identities"))
-    r.register(ComponentInfo(name="accounts", label="Accounts", description="View accounts"))
+    r.register(
+        ComponentInfo(
+            name="identities", label="Identities", description="View identities"
+        )
+    )
+    r.register(
+        ComponentInfo(name="accounts", label="Accounts", description="View accounts")
+    )
     return r
 
 
@@ -129,8 +134,14 @@ def test_persisted_state_restored_on_new_instance(
     registry.disable("identities")
 
     r2 = ComponentRegistry(config_path=cfg)
-    r2.register(ComponentInfo(name="identities", label="Identities", description="View identities"))
-    r2.register(ComponentInfo(name="accounts", label="Accounts", description="View accounts"))
+    r2.register(
+        ComponentInfo(
+            name="identities", label="Identities", description="View identities"
+        )
+    )
+    r2.register(
+        ComponentInfo(name="accounts", label="Accounts", description="View accounts")
+    )
 
     assert r2.get("identities").enabled is False
     assert r2.get("accounts").enabled is True

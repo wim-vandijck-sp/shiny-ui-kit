@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import pandas as pd
 from shiny import module, reactive, render, ui
@@ -99,15 +100,27 @@ def _index_checkbox(name: str) -> ui.Tag:
 @module.ui
 def search_ui() -> ui.Tag:
     return ui.div(
-        ui.h3(ui.tags.i(class_="fa-solid fa-magnifying-glass me-2 text-primary"), "Search"),
+        ui.h3(
+            ui.tags.i(class_="fa-solid fa-magnifying-glass me-2 text-primary"), "Search"
+        ),
         ui.row(
-            ui.column(8, ui.input_text("query", "Search Query", placeholder="Search identities, roles, entitlements…")),
+            ui.column(
+                8,
+                ui.input_text(
+                    "query",
+                    "Search Query",
+                    placeholder="Search identities, roles, entitlements…",
+                ),
+            ),
             ui.column(
                 4,
                 ui.div(
                     ui.input_action_button(
                         "search_btn",
-                        ui.tags.span(ui.tags.i(class_="fa-solid fa-magnifying-glass me-1"), "Search"),
+                        ui.tags.span(
+                            ui.tags.i(class_="fa-solid fa-magnifying-glass me-1"),
+                            "Search",
+                        ),
                         class_="btn btn-primary w-100",
                     ),
                     class_="mt-4",
@@ -165,7 +178,9 @@ def search_server(
             return ui.div()
         choices = _type_filter_choices(rows)
         return ui.div(
-            ui.input_select("type_filter", "Filter by type", choices=choices, selected=_ALL_TYPES),
+            ui.input_select(
+                "type_filter", "Filter by type", choices=choices, selected=_ALL_TYPES
+            ),
             class_="mb-2",
         )
 
@@ -173,5 +188,7 @@ def search_server(
     @render.data_frame
     def search_results():
         rows = _results()
-        type_filter = input.type_filter() if hasattr(input, "type_filter") else _ALL_TYPES
+        type_filter = (
+            input.type_filter() if hasattr(input, "type_filter") else _ALL_TYPES
+        )
         return _make_results_frame(rows, type_filter)

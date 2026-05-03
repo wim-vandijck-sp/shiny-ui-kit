@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 import pandas as pd
 from shiny import module, reactive, render, ui
@@ -81,7 +82,9 @@ def _make_identity_modal(r: object) -> ui.Tag:
             _detail_row("Title", _attr(r, "job_title", "title")),
             _detail_row("Phone", _attr(r, "phone")),
         ),
-        title=ui.tags.span(ui.tags.i(class_="fa-solid fa-user me-2 text-primary"), name),
+        title=ui.tags.span(
+            ui.tags.i(class_="fa-solid fa-user me-2 text-primary"), name
+        ),
         easy_close=True,
         footer=ui.modal_button("Close"),
         size="m",
@@ -92,9 +95,13 @@ def _pagination_bar(page: int, has_prev: bool, has_next: bool) -> ui.Tag:
     prev_cls = "btn btn-sm btn-outline-secondary" + ("" if has_prev else " disabled")
     next_cls = "btn btn-sm btn-outline-secondary" + ("" if has_next else " disabled")
     return ui.div(
-        ui.input_action_button("prev_page", ui.tags.i(class_="fa-solid fa-chevron-left"), class_=prev_cls),
+        ui.input_action_button(
+            "prev_page", ui.tags.i(class_="fa-solid fa-chevron-left"), class_=prev_cls
+        ),
         ui.tags.span(f"Page {page}", class_="mx-2 align-middle text-muted small"),
-        ui.input_action_button("next_page", ui.tags.i(class_="fa-solid fa-chevron-right"), class_=next_cls),
+        ui.input_action_button(
+            "next_page", ui.tags.i(class_="fa-solid fa-chevron-right"), class_=next_cls
+        ),
         class_="d-flex align-items-center mb-2",
     )
 
@@ -141,15 +148,32 @@ def identities_ui() -> ui.Tag:
     return ui.div(
         ui.h3(ui.tags.i(class_="fa-solid fa-users me-2 text-primary"), "Identities"),
         ui.row(
-            ui.column(5, ui.input_text("search", "Search", placeholder="Name, email, alias…")),
-            ui.column(3, ui.input_select("sort", "Sort by", choices=_SORT_CHOICES, selected="name")),
-            ui.column(2, ui.input_select("page_size", "Per page", choices={str(n): str(n) for n in _PAGE_SIZES}, selected="50")),
+            ui.column(
+                5, ui.input_text("search", "Search", placeholder="Name, email, alias…")
+            ),
+            ui.column(
+                3,
+                ui.input_select(
+                    "sort", "Sort by", choices=_SORT_CHOICES, selected="name"
+                ),
+            ),
+            ui.column(
+                2,
+                ui.input_select(
+                    "page_size",
+                    "Per page",
+                    choices={str(n): str(n) for n in _PAGE_SIZES},
+                    selected="50",
+                ),
+            ),
             ui.column(
                 2,
                 ui.div(
                     ui.input_action_button(
                         "refresh",
-                        ui.tags.span(ui.tags.i(class_="fa-solid fa-rotate-right me-1"), "Refresh"),
+                        ui.tags.span(
+                            ui.tags.i(class_="fa-solid fa-rotate-right me-1"), "Refresh"
+                        ),
                         class_="btn btn-outline-secondary w-100",
                     ),
                     class_="mt-4",
@@ -189,7 +213,9 @@ def identities_server(
             if query:
                 return c.search_identities(query, limit=page_size)
             offset = (_page.get() - 1) * page_size
-            return c.list_identities(limit=page_size, offset=offset, sorters=input.sort())
+            return c.list_identities(
+                limit=page_size, offset=offset, sorters=input.sort()
+            )
         except Exception:
             return []
 
@@ -197,7 +223,9 @@ def identities_server(
     @render.ui
     def pagination_ui() -> ui.Tag:
         page = _page.get()
-        return _pagination_bar(page, has_prev=page > 1, has_next=len(_rows()) == int(input.page_size()))
+        return _pagination_bar(
+            page, has_prev=page > 1, has_next=len(_rows()) == int(input.page_size())
+        )
 
     @output
     @render.data_frame
