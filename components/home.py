@@ -1,5 +1,6 @@
 import time
-from typing import TYPE_CHECKING, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from shiny import module, reactive, render, ui
 
@@ -133,7 +134,9 @@ def home_ui() -> ui.Tag:
             APP_TITLE,
             class_="mb-1",
         ),
-        ui.p("Identity Security Cloud — self-service portal.", class_="text-muted mb-4"),
+        ui.p(
+            "Identity Security Cloud — self-service portal.", class_="text-muted mb-4"
+        ),
         ui.output_ui("user_card"),
         ui.h5(
             ui.tags.i(class_="fa-solid fa-chart-bar me-2"),
