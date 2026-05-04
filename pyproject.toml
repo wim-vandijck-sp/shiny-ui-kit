@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
 authors = [
-    {name = "Wim Van Dijck", email = "wim.v.dijck@gmail.com"}
+    {name = "Wim Van Dijck", email = "wim.vandijck@sailpoint.com"}
 ]
 dependencies = [
     "shiny>=1.0.0",
