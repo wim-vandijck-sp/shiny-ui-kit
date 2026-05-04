@@ -44,12 +44,13 @@ class SailPointClient:
     def _call(self, fn, *args, **kwargs):
         """Execute an SDK call and convert ApiException → SailPointError."""
         import time as _time
-        logger.debug("API call: %s(%s)", fn.__name__, _fmt_kwargs(kwargs))
+        fn_name = getattr(fn, "__name__", repr(fn))
+        logger.debug("API call: %s(%s)", fn_name, _fmt_kwargs(kwargs))
         t0 = _time.monotonic()
         try:
             result = fn(*args, **kwargs)
             elapsed = (_time.monotonic() - t0) * 1000
-            logger.debug("API call %s completed in %.0fms", fn.__name__, elapsed)
+            logger.debug("API call %s completed in %.0fms", fn_name, elapsed)
             return result
         except ApiException as exc:
             logger.warning("SailPoint API error %s: %s — %s", exc.status, exc.reason, exc.body)
